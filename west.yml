@@ -8,6 +8,8 @@ manifest:
   remotes:
     - name: ncs
       url-base: https://github.com/nrfconnect
+    - name: nce
+      url-base: https://github.com/1NCE-GmbH
 
   projects:
     - name: nrf
@@ -15,3 +17,9 @@ manifest:
       repo-path: sdk-nrf
       revision: v2.2.0
       import: true
+    - name: nce-blueprint
+      remote: nce
+      repo-path: blueprint-zephyr
+      revision: main
+
+
