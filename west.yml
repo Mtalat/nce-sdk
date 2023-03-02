@@ -4,7 +4,6 @@
 manifest:
   self:
     path: modules/lib/nce-sdk
-    submodules: true
 
   remotes:
     - name: ncs
