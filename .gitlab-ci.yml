@@ -1,0 +1,64 @@
+include:
+  - project: 1nce-tech/cons/various/gitlab
+    ref: master
+    file: /templates/.gitlab-global.yml
+
+stages:
+  - build
+  - test
+
+default:
+  image: registry.gitlab.com/1nce-tech/cons/embedded/1nce_sdk/sdktests:latest
+
+cmake:
+  stage: build
+  script: 
+    - cmake -S test -B build/ 
+      -G "Unix Makefiles"
+      -DCMAKE_BUILD_TYPE=Debug
+      -DCMAKE_C_FLAGS='--coverage -Wall -Wextra -Werror -DNDEBUG'
+    -  make -C build/ all
+
+unit-test:
+  stage: test
+  script:
+    - ceedling test:all 
+
+complexity:
+  stage: test
+  script:
+    - find source/ -iname '*.c' |
+      xargs complexity --scores --threshold=0 --horrid-threshold=8
+
+formatting:
+  stage: test
+  script:
+    - cd source && find . -iname "*.[hc]" -type f -exec uncrustify --check -c ../tools/uncrustify.cfg -l C {} +
+
+spelling:
+  stage: test
+  before_script:
+    - export USER=gitlab-runner
+  script: 
+    - |
+      PATH=$PATH:/CI-CD-Github-Actions/spellings/tools
+      for lexfile in `find ./ -name lexicon.txt`
+        do dir=${lexfile%/lexicon.txt}
+          echo $dir
+          find-unknown-comment-words --directory $dir
+          if [ $? -ne "0" ]
+          then
+            exit 1
+          fi
+        done
+
+doxygen:
+  stage: test
+  before_script:
+    - chmod 777 docs/doxygen/Doxyfile
+  script:
+    - |
+      doxygen docs/doxygen/Doxyfile 2>&1 | tee doxyoutput.txt
+      if [[ "$(wc -c < doxyoutput.txt | bc)" = "0" ]]; then exit 0; else exit 1; fi
+
+
