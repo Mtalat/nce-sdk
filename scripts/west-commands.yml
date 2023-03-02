@@ -1,0 +1,6 @@
+west-commands:
+  - file: scripts/west_commands/quickstart.py
+    commands:
+      - name: quickstart
+        class: QuickStart
+        help: build and flash 1NCE CoAP Demo (with DTLS) to a connected nrf9160 DK

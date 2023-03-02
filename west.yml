@@ -4,6 +4,7 @@
 manifest:
   self:
     path: modules/lib/nce-sdk
+    west-commands: scripts/west-commands.yml
 
   remotes:
     - name: ncs
